@@ -368,12 +368,12 @@ objects:
             GOGS_HOSTNAME="gogs-$CICD_NAMESPACE.$HOSTNAME"
 
             if [ "${EPHEMERAL}" == "true" ] ; then
-              oc new-app -f https://raw.githubusercontent.com/OpenShiftDemos/gogs-openshift-docker/master/openshift/gogs-template.yaml \
+              oc new-app -f https://raw.githubusercontent.com/intachompoo/gogs-openshift-docker/master/openshift/gogs-template.yaml \
                   --param=GOGS_VERSION=0.11.34 \
                   --param=HOSTNAME=$GOGS_HOSTNAME \
                   --param=SKIP_TLS_VERIFY=true
             else
-              oc new-app -f https://raw.githubusercontent.com/OpenShiftDemos/gogs-openshift-docker/master/openshift/gogs-persistent-template.yaml \
+              oc new-app -f https://raw.githubusercontent.com/intachompoo/gogs-openshift-docker/master/openshift/gogs-persistent-template.yaml \
                   --param=GOGS_VERSION=0.11.34 \
                   --param=HOSTNAME=$GOGS_HOSTNAME \
                   --param=SKIP_TLS_VERIFY=true
@@ -381,7 +381,7 @@ objects:
 
             sleep 5
 
-            oc new-app -f http://bit.ly/openshift-sonarqube-embedded-template --param=SONARQUBE_VERSION=7.0 --param=SONAR_MAX_MEMORY=6Gi
+            oc new-app -f https://raw.githubusercontent.com/OpenShiftDemos/sonarqube-openshift-docker/master/sonarqube-template.yaml --param=SONARQUBE_VERSION=7.0 --param=SONAR_MAX_MEMORY=4Gi
 
             if [ "${WITH_CHE}" == "true" ] ; then
               oc process -f https://raw.githubusercontent.com/minishift/minishift/master/addons/che/templates/che-single-user.yml \
@@ -394,9 +394,9 @@ objects:
             fi
 
             if [ "${EPHEMERAL}" == "true" ] ; then
-              oc new-app -f https://raw.githubusercontent.com/OpenShiftDemos/nexus/master/nexus3-template.yaml --param=NEXUS_VERSION=3.12.1 --param=MAX_MEMORY=2Gi
+              oc new-app -f https://raw.githubusercontent.com/intachompoo/nexus/master/nexus3-template.yaml --param=NEXUS_VERSION=3.12.1 --param=MAX_MEMORY=2Gi
             else
-              oc new-app -f https://raw.githubusercontent.com/OpenShiftDemos/nexus/master/nexus3-persistent-template.yaml --param=NEXUS_VERSION=3.12.1 --param=MAX_MEMORY=2Gi
+              oc new-app -f https://raw.githubusercontent.com/intachompoo/nexus/master/nexus3-persistent-template.yaml --param=NEXUS_VERSION=3.12.1 --param=MAX_MEMORY=2Gi
             fi
 
             GOGS_SVC=$(oc get svc gogs -o template --template='{{.spec.clusterIP}}')
@@ -423,7 +423,7 @@ objects:
 
             cat <<EOF > /tmp/data.json
             {
-              "clone_addr": "https://github.com/OpenShiftDemos/openshift-tasks.git",
+              "clone_addr": "https://github.com/intachompoo/openshift-tasks.git",
               "uid": 1,
               "repo_name": "openshift-tasks"
             }
