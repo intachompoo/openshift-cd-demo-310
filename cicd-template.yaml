@@ -11,19 +11,19 @@ metadata:
 message: "Use the following credentials for login:\nJenkins: use your OpenShift credentials\nNexus: admin/admin123\nSonarQube: admin/admin\nGogs Git Server: gogs/gogs"
 parameters:
 - displayName: DEV project name
-  value: dev
+  value: demodev
   name: DEV_PROJECT
   required: true
 - displayName: SIT project name
-  value: sit
+  value: demosit
   name: SIT_PROJECT
   required: true
 - displayName: UAT project name
-  value: uat
+  value: demouat
   name: UAT_PROJECT
   required: true
 - displayName: PROD project name
-  value: prod
+  value: demoprod
   name: PROD_PROJECT
   required: true
 - displayName: Deploy Eclipse Che
@@ -91,8 +91,8 @@ objects:
             agent {
               label 'maven'
             }
-            prods {
-              prod('Build App') {
+            demoprods {
+              demoprod('Build App') {
                 steps {
                   git branch: 'eap-7', url: 'http://gogs:3000/gogs/openshift-tasks.git'
                   script {
@@ -102,25 +102,25 @@ objects:
                   sh "${mvnCmd} install -DskipTests=true"
                 }
               }
-              prod('Test') {
+              demoprod('Test') {
                 steps {
                   sh "${mvnCmd} test"
                   step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
                 }
               }
-              prod('Code Analysis') {
+              demoprod('Code Analysis') {
                 steps {
                   script {
                     sh "${mvnCmd} sonar:sonar -Dsonar.host.url=http://sonarqube:9000 -DskipTests=true"
                   }
                 }
               }
-              prod('Archive App') {
+              demoprod('Archive App') {
                 steps {
                   sh "${mvnCmd} deploy -DskipTests=true -P nexus3"
                 }
               }
-              prod('Create Image Builder') {
+              demoprod('Create Image Builder') {
                 when {
                   expression {
                     openshift.withCluster() {
@@ -140,7 +140,7 @@ objects:
                   }
                 }
               }
-              prod('Build Image') {
+              demoprod('Build Image') {
                 steps {
                   sh "rm -rf oc-build && mkdir -p oc-build/deployments"
                   sh "cp target/openshift-tasks.war oc-build/deployments/ROOT.war"
@@ -154,7 +154,7 @@ objects:
                   }
                 }
               }
-              prod('Create DEV') {
+              demoprod('Create DEV') {
                 when {
                   expression {
                     openshift.withCluster() {
@@ -184,7 +184,7 @@ objects:
                   }
                 }
               }
-              prod('Deploy DEV') {
+              demoprod('Deploy DEV') {
                 steps {
                   script {
                     openshift.withCluster() {
@@ -259,7 +259,7 @@ objects:
                   }
                 }
               }
-              prod('Promote to PROD?') {
+              demoprod('Promote to PROD?') {
                 steps {
                   timeout(time:15, unit:'MINUTES') {
                       input message: "Promote to PROD?", ok: "Promote"
@@ -272,7 +272,7 @@ objects:
                   }
                 }
               }
-              prod('Deploy PROD') {
+              demoprod('Deploy PROD') {
                 steps {
                   script {
                     openshift.withCluster() {
@@ -465,6 +465,6 @@ objects:
           image: docker-registry.default.svc:5000/openshift/origin:v3.10
           name: cicd-demo-installer-job
           resources: {}
-          terminationMessagePath: /dev/termination-log
+          terminationMessagePath: /demodev/termination-log
           terminationMessagePolicy: File
         restartPolicy: Never
