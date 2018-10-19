@@ -14,11 +14,11 @@ parameters:
   value: dev
   name: DEV_PROJECT
   required: true
- displayName: SIT project name
+- displayName: SIT project name
   value: sit
   name: SIT_PROJECT
   required: true
- displayName: UAT project name
+- displayName: UAT project name
   value: uat
   name: UAT_PROJECT
   required: true
